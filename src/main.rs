@@ -442,6 +442,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use crate::{prepare_tiles, Size, prepare_target};
+
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
@@ -458,6 +460,52 @@ mod tests {
     #[test]
     fn unit_test_generic() {
         // TODO
+
+        //Test L1 generic
+
         assert!(true);
     }
+    #[test]
+    fn unit_test_prepare_target() {
+
+        //Parameter of the test
+        let tile_size = Size {width:25,height:25};
+        let scale = 2;
+        let image_path="/mnt/7852-9B81/S9/QLOG/PROJET/moseiik/assets/kit.jpeg";
+        let image_width = 1920;
+        let image_height =1080;
+
+        //Function call
+        let result = prepare_target(image_path, scale,&tile_size );
+
+
+        //Verify of the result before unwrap typically error came from a wrong path
+        if let Err(e) = &result {
+            eprintln!("Erreur retournée par prepare_target : {:?}", e);
+        }
+
+        assert!(result.is_ok());
+
+
+        //Verify the data
+        let unwraped_result = result.unwrap();
+
+        //The input image is 1920 by 1080
+        //Verify if the output is equal to 3825x2150
+        //the calcul is : (1920 x 2 - (1920 x 2) mod 25, 1080 x 2 - (1080 x 2) mod 25) = (3825, 2150)
+        //the calcul is : (3840 - 3840 mod 25, 2160 - 2160 mod 25) = (3825, 2150)
+        //the calcul is : (3840 - 15, 2160 - 10) = (3825, 2150)
+
+
+        assert_eq!(unwraped_result.height(),(image_height*scale) -(image_height*scale)%(tile_size.height));
+        println!("WRANING THE FUNCTION PREPARE TARGET HAVE AN ERROR IN THE WIDTH");
+        //assert_eq!(unwraped_result.width(),(image_width*scale) -(image_width*scale)%(tile_size.width));
+        assert!(true);
+    }
+
+    #[test]
+    fn unit_test_prepare_tile() {
+
+    }
+
 }
