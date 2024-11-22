@@ -504,8 +504,29 @@ mod tests {
     }
 
     #[test]
-    fn unit_test_prepare_tile() {
+    fn unit_test_prepare_tiles() {
+        // Objective : check that prepared tiles have the right size
 
+        // Define the tile size
+        let tile_size = Size {
+            width: 5,
+            height: 5,
+        };
+        let tile_path = "assets/tiles-small";
+
+        // Use the function and get its result
+        let res = prepare_tiles(tile_path, &tile_size, false);
+
+        // If the result is valid, then all tiles get tested
+        if let Ok(tiles) = &res {
+            for (_i, tile) in tiles.iter().enumerate() {
+                // Check that all sizes are right
+                assert!(tile.width() == tile_size.width && tile.height() == tile_size.height);
+            }
+        // Otherwise, fail
+        } else {
+            assert!(false);
+        }
     }
 
 }
