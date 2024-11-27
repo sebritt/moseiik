@@ -1,0 +1,43 @@
+name: CI for Moseiik
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test on ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+
+    steps:
+      # Étape 1 : Mise en place de QEMU si nécessaire (pour ARM)
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: all
+
+      # Étape 2 : Mise en place de Docker Buildx pour la construction multi-architecture
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Étape 3 : Vérifier le code source
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Étape 4 : Construire l'image Docker pour l'architecture spécifiée dans la matrice
+      - name: Build Docker image
+        run: |
+          docker build --platform ${{ matrix.platform }} -t moseiik_docker .
+
+      # Étape 5 : Exécuter les tests dans le conteneur pour l'architecture spécifiée
+      - name: Run tests
+        run: |
+          docker run --platform ${{ matrix.platform }} --rm moseiik_docker test
