@@ -321,6 +321,13 @@ unsafe fn get_optimal_l1(simd_flag: bool, verbose: bool) -> unsafe fn(&RgbImage,
                     FN_POINTER = l1_neon;
                 }
             }
+            #[cfg(not(any(target_arch = "x86", target_arch = "x86_64", target_arch = "aarch64")))]
+            {
+                FN_POINTER = l1_generic;
+                if verbose {
+                    println!("Architecture non prise en charge : utilisation de l'implémentation générique.");
+                }
+            }
         }
     });
 
