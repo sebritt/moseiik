@@ -22,8 +22,8 @@ jobs:
           platforms: all
 
       # Étape 2 : Mise en place de Docker Buildx pour la construction multi-architecture
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      #- name: Set up Docker Buildx
+      #  uses: docker/setup-buildx-action@v2
 
       # Étape 3 : Vérifier le code source
       - name: Checkout code
