@@ -3,10 +3,7 @@ name: CI for Moseiik
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - docker_test
 
 jobs:
   test:
