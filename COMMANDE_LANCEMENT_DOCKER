@@ -1,16 +1,22 @@
-
-//Commande pour build l'image docker:
-sudo docker image build -t moseiik_docker .
-
-//Pour lancer docker en spécifiant le DNS
-docker run --dns 8.8.8.8 -it --rm moseiik_docker
-
-//Pour lancer les test :
-docker run --dns 8.8.8.8 -it --rm moseiik_docker test
-
-//Pour lancer le programme
-docker run --dns 8.8.8.8 -it --rm moseiik_docker
+//Avec spécification de l'archi machine, x86 et arm:
+docker build -t moseiik_docker   .
+docker build --platform linux/amd64 -t moseiik_docker   .
+docker build --platform linux/arm64 -t moseiik_docker .
 
 
+//l'option --rm permet de supprimer automatiquement après fermeture l'image utilisé cela
+//est plus lent mais gain d'espace memoire
+
+//Pour lancer les test sous archi machine, x86 et arm :
+docker run -it --rm moseiik_docker test
+docker run --platform linux/amd64 -it --rm moseiik_docker test
+docker run --platform linux/arm64 -it --rm moseiik_docker test
+
+//Pour lancer le programme sous archi machine,  x86 et arm
+docker run  -it --rm moseiik_docker
+docker run --platform linux/amd64 -it --rm moseiik_docker
+docker run --platform linux/arm64 -it --rm moseiik_docker
+
+//ATTENTION POUR LANCER SUR UNE MACHINE X86 le build ARM il faut qemu !!!!!!
 
 
