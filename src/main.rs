@@ -585,8 +585,7 @@ mod tests {
             //the computation is : (3840 - 15, 2160 - 10) = (3825, 2150)
 
             assert_eq!(target.height(),(image_height*scale) -(image_height*scale)%(tile_size.height));
-            println!("WARNING THE FUNCTION PREPARE TARGET HAS AN ERROR IN THE WIDTH");
-            //assert_eq!(target.width(),(image_width*scale) -(image_width*scale)%(tile_size.width));
+            assert_eq!(target.width(),(image_width*scale) -(image_width*scale)%(tile_size.width));
             assert!(true);
         }
     }
