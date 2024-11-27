@@ -442,7 +442,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use crate::{prepare_tiles, Size, prepare_target};
+    use super::{prepare_tiles, Size, prepare_target};
 
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
@@ -471,36 +471,30 @@ mod tests {
         //Parameter of the test
         let tile_size = Size {width:25,height:25};
         let scale = 2;
-        let image_path="/mnt/7852-9B81/S9/QLOG/PROJET/moseiik/assets/kit.jpeg";
+        let image_path="assets/kit.jpeg";
         let image_width = 1920;
         let image_height =1080;
 
         //Function call
-        let result = prepare_target(image_path, scale,&tile_size );
-
+        let result = prepare_target(image_path, scale,&tile_size);
 
         //Verify of the result before unwrap typically error came from a wrong path
         if let Err(e) = &result {
-            eprintln!("Erreur retournée par prepare_target : {:?}", e);
+            eprintln!("prepare_target error : {:?}", e);
+            assert!(false);
+        } else if let Ok(target) = &result{
+
+            //The input image is 1920 by 1080
+            //Verify if the output is equal to 3825x2150
+            //the computation is : (1920 x 2 - (1920 x 2) mod 25, 1080 x 2 - (1080 x 2) mod 25) = (3825, 2150)
+            //the computation is : (3840 - 3840 mod 25, 2160 - 2160 mod 25) = (3825, 2150)
+            //the computation is : (3840 - 15, 2160 - 10) = (3825, 2150)
+
+            assert_eq!(target.height(),(image_height*scale) -(image_height*scale)%(tile_size.height));
+            println!("WARNING THE FUNCTION PREPARE TARGET HAS AN ERROR IN THE WIDTH");
+            //assert_eq!(target.width(),(image_width*scale) -(image_width*scale)%(tile_size.width));
+            assert!(true);
         }
-
-        assert!(result.is_ok());
-
-
-        //Verify the data
-        let unwraped_result = result.unwrap();
-
-        //The input image is 1920 by 1080
-        //Verify if the output is equal to 3825x2150
-        //the calcul is : (1920 x 2 - (1920 x 2) mod 25, 1080 x 2 - (1080 x 2) mod 25) = (3825, 2150)
-        //the calcul is : (3840 - 3840 mod 25, 2160 - 2160 mod 25) = (3825, 2150)
-        //the calcul is : (3840 - 15, 2160 - 10) = (3825, 2150)
-
-
-        assert_eq!(unwraped_result.height(),(image_height*scale) -(image_height*scale)%(tile_size.height));
-        println!("WRANING THE FUNCTION PREPARE TARGET HAVE AN ERROR IN THE WIDTH");
-        //assert_eq!(unwraped_result.width(),(image_width*scale) -(image_width*scale)%(tile_size.width));
-        assert!(true);
     }
 
     #[test]
@@ -515,18 +509,18 @@ mod tests {
         let tile_path = "assets/tiles-small";
 
         // Use the function and get its result
-        let res = prepare_tiles(tile_path, &tile_size, false);
+        let result = prepare_tiles(tile_path, &tile_size, false);
 
         // If the result is valid, then all tiles get tested
-        if let Ok(tiles) = &res {
+        if let Ok(tiles) = &result {
             for (_i, tile) in tiles.iter().enumerate() {
                 // Check that all sizes are right
                 assert!(tile.width() == tile_size.width && tile.height() == tile_size.height);
             }
         // Otherwise, fail
-        } else {
+        } else if let Err(e) = &result {
+            eprintln!("prepare_tiles error : {:?}", e);
             assert!(false);
         }
     }
-
 }
