@@ -442,7 +442,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use image::{ImageReader, RgbImage, Rgb};
-    use super::{prepare_tiles, Size, prepare_target, l1_generic};
+    use super::{prepare_tiles, Size, prepare_target, l1_generic,};
     #[cfg(target_arch = "x86_64")]
     use super::l1_x86_sse2;
     #[test]
@@ -489,6 +489,7 @@ mod tests {
 
     #[test]
     #[cfg(target_arch = "aarch64")]
+    use super::l1_neon;
     fn unit_test_aarch64() {
         // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
         let img1 = RgbImage::from_raw(3, 3, vec![
