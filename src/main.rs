@@ -489,8 +489,9 @@ mod tests {
 
     #[test]
     #[cfg(target_arch = "aarch64")]
-    use super::l1_neon;
+
     fn unit_test_aarch64() {
+        use super::l1_neon;
         // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
         let img1 = RgbImage::from_raw(3, 3, vec![
             5, 103, 35, // Pixel (0,0)
