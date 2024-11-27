@@ -76,7 +76,8 @@ Attention, les tests d'intégration ne sont pas éxecutés si au moins un test u
 
 ### Création d'une image Docker
 
-L'image docker permet d'exécuter le code et doit donc au minimum contenir le code source ainsi que `cargo`. Il est également possible d'y télécharger les vignettes de la base en ligne.
+L'image docker permet d'exécuter le code et doit donc au minimum contenir le code source ainsi que `cargo`.
+Il est également possible d'y télécharger les vignettes de la base en ligne.
 
 Il est possible avec Docker de passer des paramètres à une commande exécutée dans l'image Docker. Pour cela, il suffit d'utiliser un entrypoint en terminant le Dockerfile avec la ligne :
 

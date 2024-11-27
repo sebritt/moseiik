@@ -1,0 +1,16 @@
+
+//Commande pour build l'image docker:
+sudo docker image build -t moseiik_docker .
+
+//Pour lancer docker en spécifiant le DNS
+docker run --dns 8.8.8.8 -it --rm moseiik_docker
+
+//Pour lancer les test :
+docker run --dns 8.8.8.8 -it --rm moseiik_docker test
+
+//Pour lancer le programme
+docker run --dns 8.8.8.8 -it --rm moseiik_docker
+
+
+
+
