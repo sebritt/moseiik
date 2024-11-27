@@ -442,28 +442,124 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{prepare_tiles, Size, prepare_target};
+    use image::{ImageReader, RgbImage, Rgb};
+    use super::{prepare_tiles, Size, prepare_target, l1_generic, l1_x86_sse2};
 
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
-        // TODO
-        assert!(true);
+        // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
+        let img1 = RgbImage::from_raw(3, 3, vec![
+            5, 103, 35, // Pixel (0,0)
+            45, 23, 8, // Pixel (0,1)
+            91, 18, 0, // Pixel (0,2)
+            202, 51, 62, // Pixel (1,0)
+            5, 103, 35, // Pixel (1,1)
+            45, 23, 8, // Pixel (1,2)
+            91, 18, 0, // Pixel (2,0)
+            202, 51, 62, // Pixel (2,1)
+            202, 51, 62, // Pixel (2,2)
+        ]).unwrap();
+        let img2 = RgbImage::from_raw(3, 3, vec![
+            73, 10, 42, // Pixel (0,0)
+            19, 5, 33, // Pixel (0,1)
+            105, 206, 53, // Pixel (0,2)
+            0, 14, 1, // Pixel (1,0)
+            73, 10, 42, // Pixel (1,1)
+            19, 5, 33, // Pixel (1,2)
+            105, 206, 53, // Pixel (2,0)
+            0, 14, 1, // Pixel (2,1)
+            0, 14, 1, // Pixel (2,2)
+        ]).unwrap();
+
+        // The L1 Norm should be equal to the sum of the absolute difference between every pixel's values of both images
+        // To compute its expected value, loop through all pixels of both images and compare them together
+        // This can be written in a more efficient way, but it is more visual and more explicit
+        let mut expected_result: i32 = 0;
+        for i in 0..3 { // i = {0, 1}
+            for j in 0..3 { // j = {0, 1}
+                for rgb in 0..3 { // rgb = {0, 1, 2}
+                    expected_result += i32::abs((img1.get_pixel(i,j)[rgb] as i32)-(img2.get_pixel(i,j)[rgb] as i32));
+                }
+            }
+        }
+        // l1_x86_sse2 is unsafe so we need to mark it as such
+        unsafe{assert_eq!(l1_x86_sse2(&img1, &img2), expected_result);}
     }
 
     #[test]
     #[cfg(target_arch = "aarch64")]
     fn unit_test_aarch64() {
-        assert!(true);
+        // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
+        let img1 = RgbImage::from_raw(3, 3, vec![
+            5, 103, 35, // Pixel (0,0)
+            45, 23, 8, // Pixel (0,1)
+            91, 18, 0, // Pixel (0,2)
+            202, 51, 62, // Pixel (1,0)
+            5, 103, 35, // Pixel (1,1)
+            45, 23, 8, // Pixel (1,2)
+            91, 18, 0, // Pixel (2,0)
+            202, 51, 62, // Pixel (2,1)
+            202, 51, 62, // Pixel (2,2)
+        ]).unwrap();
+        let img2 = RgbImage::from_raw(3, 3, vec![
+            73, 10, 42, // Pixel (0,0)
+            19, 5, 33, // Pixel (0,1)
+            105, 206, 53, // Pixel (0,2)
+            0, 14, 1, // Pixel (1,0)
+            73, 10, 42, // Pixel (1,1)
+            19, 5, 33, // Pixel (1,2)
+            105, 206, 53, // Pixel (2,0)
+            0, 14, 1, // Pixel (2,1)
+            0, 14, 1, // Pixel (2,2)
+        ]).unwrap();
+
+        // The L1 Norm should be equal to the sum of the absolute difference between every pixel's values of both images
+        // To compute its expected value, loop through all pixels of both images and compare them together
+        // This can be written in a more efficient way, but it is more visual and more explicit
+        let mut expected_result: i32 = 0;
+        for i in 0..3 { // i = {0, 1}
+            for j in 0..3 { // j = {0, 1}
+                for rgb in 0..3 { // rgb = {0, 1, 2}
+                    expected_result += i32::abs((img1.get_pixel(i,j)[rgb] as i32)-(img2.get_pixel(i,j)[rgb] as i32));
+                }
+            }
+        }
+        // l1_x86_sse2 is unsafe so we need to mark it as such
+        unsafe{assert_eq!(l1_x86_sse2(&img1, &img2), expected_result);}
     }
 
     #[test]
     fn unit_test_generic() {
-        // TODO
 
         //Test L1 generic
 
-        assert!(true);
+        // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
+        let img1 = RgbImage::from_raw(2, 2, vec![
+            5, 103, 35, // Pixel (0,0)
+            45, 23, 8, // Pixel (0,1)
+            91, 18, 0, // Pixel (1,0)
+            202, 51, 62, // Pixel (1,1)
+        ]).unwrap();
+        let img2 = RgbImage::from_raw(2, 2, vec![
+            73, 10, 42, // Pixel (0,0)
+            19, 5, 33, // Pixel (0,1)
+            105, 206, 53, // Pixel (1,0)
+            0, 14, 1, // Pixel (1,1)
+        ]).unwrap();
+
+        // The L1 Norm should be equal to the sum of the absolute difference between every pixel's values of both images
+        // To compute its expected value, loop through all pixels of both images and compare them together
+        // This can be written in a more efficient way, but it is more visual and more explicit
+        let mut expected_result: i32 = 0;
+        for i in 0..2 { // i = {0, 1}
+            for j in 0..2 { // j = {0, 1}
+                for rgb in 0..3 { // rgb = {0, 1, 2}
+                    expected_result += i32::abs((img1.get_pixel(i,j)[rgb] as i32)-(img2.get_pixel(i,j)[rgb] as i32));
+                }
+            }
+        }
+        assert_eq!(l1_generic(&img1, &img2), expected_result);
     }
     #[test]
     fn unit_test_prepare_target() {
