@@ -13,7 +13,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install wget -y
 RUN apt-get install unzip -y
-RUN apt-get install iputils-ping -y
+
 
 
 
@@ -24,7 +24,7 @@ COPY Cargo.toml /app
 COPY ./assets /app/assets
 
 
-RUN ping www.google.com
+
 #donwload the test images
 RUN wget https://nasext-vaader.insa-rennes.fr/ietr-vaader/moseiik_test_images.zip -P tests/
 RUN mkdir tests/moseiik_test_images
