@@ -22,7 +22,7 @@ RUN apt-get install unzip -y
 COPY ./src /app/src
 COPY Cargo.toml /app
 COPY ./assets /app/assets
-COPY ./tests/temps.rs /app/tests/temps.rs
+COPY ./tests/temp.rs /app/tests/temp.rs
 
 
 
