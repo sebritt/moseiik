@@ -321,6 +321,7 @@ unsafe fn get_optimal_l1(simd_flag: bool, verbose: bool) -> unsafe fn(&RgbImage,
                     FN_POINTER = l1_neon;
                 }
             }
+
         }
     });
 
@@ -441,8 +442,9 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use image::{ImageReader, RgbImage, Rgb};
-    use super::{prepare_tiles, Size, prepare_target, l1_generic, l1_x86_sse2};
-
+    use super::{prepare_tiles, Size, prepare_target, l1_generic,};
+    #[cfg(target_arch = "x86_64")]
+    use super::l1_x86_sse2;
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
@@ -487,7 +489,9 @@ mod tests {
 
     #[test]
     #[cfg(target_arch = "aarch64")]
+
     fn unit_test_aarch64() {
+        use super::l1_neon;
         // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
         let img1 = RgbImage::from_raw(3, 3, vec![
             5, 103, 35, // Pixel (0,0)
@@ -524,7 +528,7 @@ mod tests {
             }
         }
         // l1_x86_sse2 is unsafe so we need to mark it as such
-        unsafe{assert_eq!(l1_x86_sse2(&img1, &img2), expected_result);}
+        unsafe{assert_eq!(l1_neon(&img1, &img2), expected_result);}
     }
 
     #[test]
