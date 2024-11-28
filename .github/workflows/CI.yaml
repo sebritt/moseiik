@@ -37,4 +37,4 @@ jobs:
       # Étape 5 : Exécuter les tests dans le conteneur pour l'architecture spécifiée
       - name: Run tests
         run: |
-          docker run --platform ${{ matrix.platform }} --rm moseiik_docker test --release
+          docker run --platform ${{ matrix.platform }} --rm moseiik_docker
