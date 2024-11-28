@@ -22,6 +22,9 @@ RUN apt-get install unzip -y
 COPY ./src /app/src
 COPY Cargo.toml /app
 COPY ./assets /app/assets
+COPY ./tests /app/tests/temps.rs
+COPY ./tests /app/tests/kit.Jjpeg
+COPY ./tests /app/tests/output.png
 
 
 
@@ -32,8 +35,5 @@ RUN unzip tests/moseiik_test_images.zip -d tests/moseiik_test_images/
 
 
 ####################################### PROCESS ############################################
+ENTRYPOINT [ "cargo", "test", "--release", "--" ]
 
-ENTRYPOINT ["cargo"]
-
-# By default, cargo run the program if we whant to test just add the arg test
-CMD ["run", "--release", "--", "--image", "assets/target-small.png", "--tiles", "assets/tiles-small"]
