@@ -1,11 +1,13 @@
 #[cfg(test)]
 mod tests {
+    // Dependancies in the main fileeee
     use moseiik::main::Options;
     use moseiik::main::compute_mosaic;
     use image::{GenericImageView, ImageReader};
 
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+    // x86 architecture integration test
     fn test_x86() {
         // Set up the parameters for the mosaic
         let args = Options {
@@ -20,7 +22,7 @@ mod tests {
             num_thread: 8,
         };
 
-        //Compute the mosaic
+        // Compute the mosaic
         compute_mosaic(args);
 
         // Load the ground truth and the produced mosaic
@@ -42,9 +44,10 @@ mod tests {
         }
 
         // Is there a difference ?
-        println!("Absolute difference between the produced image and the ground truth : {}", difference);
+        assert_eq!(difference, 0);
     }
 
+    // aarch architecture integration test
     #[test]
     #[cfg(target_arch = "aarch64")]
     fn test_aarch64() {
@@ -83,9 +86,10 @@ mod tests {
         }
 
         // Is there a difference ?
-        println!("Absolute difference between the produced image and the ground truth : {}", difference);
+        assert_eq!(difference, 0);
     }
 
+    // generic integration test
     #[test]
     fn test_generic() {
         // Set up the parameters for the mosaic
@@ -123,6 +127,6 @@ mod tests {
         }
 
         // Is there a difference ?
-        println!("Absolute difference between the produced image and the ground truth : {}", difference);
+        assert_eq!(difference, 0);
     }
 }

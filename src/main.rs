@@ -441,14 +441,16 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use image::{ImageReader, RgbImage, Rgb};
-    use super::{prepare_tiles, Size, prepare_target, l1_generic,};
-    #[cfg(target_arch = "x86_64")]
-    use super::l1_x86_sse2;
+
+    // Import functions needed in unit tests
+    use image::{RgbImage};
+    use super::{prepare_tiles, Size, prepare_target, l1_generic};
     #[test]
     #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     fn unit_test_x86() {
-        // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
+        use super::l1_x86_sse2;
+        //Test L1 generic
+        // Create 2 new RgbImage with 3x3 pixels, set the pixel colors to "random" values
         let img1 = RgbImage::from_raw(3, 3, vec![
             5, 103, 35, // Pixel (0,0)
             45, 23, 8, // Pixel (0,1)
@@ -476,8 +478,8 @@ mod tests {
         // To compute its expected value, loop through all pixels of both images and compare them together
         // This can be written in a more efficient way, but it is more visual and more explicit
         let mut expected_result: i32 = 0;
-        for i in 0..3 { // i = {0, 1}
-            for j in 0..3 { // j = {0, 1}
+        for i in 0..3 { // i = {0, 1, 2}
+            for j in 0..3 { // j = {0, 1, 2}
                 for rgb in 0..3 { // rgb = {0, 1, 2}
                     expected_result += i32::abs((img1.get_pixel(i,j)[rgb] as i32)-(img2.get_pixel(i,j)[rgb] as i32));
                 }
@@ -489,10 +491,9 @@ mod tests {
 
     #[test]
     #[cfg(target_arch = "aarch64")]
-
     fn unit_test_aarch64() {
         use super::l1_neon;
-        // Create 2 new RgbImage with 2x2 pixels, set the pixel colors to "random" values
+        // Create 2 new RgbImage with 3x3 pixels, set the pixel colors to "random" values
         let img1 = RgbImage::from_raw(3, 3, vec![
             5, 103, 35, // Pixel (0,0)
             45, 23, 8, // Pixel (0,1)
@@ -520,8 +521,8 @@ mod tests {
         // To compute its expected value, loop through all pixels of both images and compare them together
         // This can be written in a more efficient way, but it is more visual and more explicit
         let mut expected_result: i32 = 0;
-        for i in 0..3 { // i = {0, 1}
-            for j in 0..3 { // j = {0, 1}
+        for i in 0..3 { // i = {0, 1, 2}
+            for j in 0..3 { // j = {0, 1, 2}
                 for rgb in 0..3 { // rgb = {0, 1, 2}
                     expected_result += i32::abs((img1.get_pixel(i,j)[rgb] as i32)-(img2.get_pixel(i,j)[rgb] as i32));
                 }
@@ -565,8 +566,9 @@ mod tests {
     }
     #[test]
     fn unit_test_prepare_target() {
+        // Objective : check that the prepared target has the right size
 
-        //Parameter of the test
+        //Parameters of the test
         let tile_size = Size {width:25,height:25};
         let scale = 2;
         let image_path="assets/kit.jpeg";
@@ -576,7 +578,7 @@ mod tests {
         //Function call
         let result = prepare_target(image_path, scale,&tile_size);
 
-        //Verify of the result before unwrap typically error came from a wrong path
+        //Verification of the result before unwrap (typically an error can come from a wrong path)
         if let Err(e) = &result {
             eprintln!("prepare_target error : {:?}", e);
             assert!(false);
