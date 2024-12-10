@@ -15,9 +15,6 @@ RUN apt-get install wget -y
 RUN apt-get install unzip -y
 
 
-
-
-
 # Copy files from host machine to the container
 COPY ./src /app/src
 COPY Cargo.toml /app

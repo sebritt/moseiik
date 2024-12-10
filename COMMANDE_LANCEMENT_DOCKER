@@ -1,22 +1,52 @@
-//Avec spécification de l'archi machine, x86 et arm:
-docker build -t moseiik_docker   .
-docker build --platform linux/amd64 -t moseiik_docker   .
+# Guide de lancement Docker pour Moseiik
+# Authors: RITTEMARD.S FRADET.L
+
+## Construction des images Docker
+
+### Construction pour l'architecture de la machine (par défaut) :
+docker build -t moseiik_docker .
+
+### Construction pour l'architecture x86 :
+docker build --platform linux/amd64 -t moseiik_docker .
+
+### Construction pour l'architecture ARM :
 docker build --platform linux/arm64 -t moseiik_docker .
 
+---
 
-//l'option --rm permet de supprimer automatiquement après fermeture l'image utilisé cela
-//est plus lent mais gain d'espace memoire
+## Exécution des tests Docker
 
-//Pour lancer les test sous archi machine, x86 et arm :
+### Test pour l'architecture de la machine (par défaut) :
 docker run -it --rm moseiik_docker test
+
+### Test pour l'architecture x86 :
 docker run --platform linux/amd64 -it --rm moseiik_docker test
+
+### Test pour l'architecture ARM :
 docker run --platform linux/arm64 -it --rm moseiik_docker test
 
-//Pour lancer le programme sous archi machine,  x86 et arm
-docker run  -it --rm moseiik_docker
+---
+
+## Exécution du programme Docker
+
+### Lancer pour l'architecture de la machine (par défaut) :
+docker run -it --rm moseiik_docker
+
+### Lancer pour l'architecture x86 :
 docker run --platform linux/amd64 -it --rm moseiik_docker
+
+### Lancer pour l'architecture ARM :
 docker run --platform linux/arm64 -it --rm moseiik_docker
 
-//ATTENTION POUR LANCER SUR UNE MACHINE X86 le build ARM il faut qemu !!!!!!
+---
+
+## Remarques importantes
+
+- **Option `--rm`** :
+  - Permet de supprimer automatiquement le conteneur après son exécution.
+  - Utile pour économiser de l'espace mémoire, mais peut ralentir les tests à cause des reconstructions nécessaires.
+
+- **Attention pour l'exécution sur une machine x86 avec un build ARM** :
+  - QEMU doit être configuré pour permettre l'émulation de l'architecture ARM sur un système x86.
 
 

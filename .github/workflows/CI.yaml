@@ -1,40 +1,43 @@
+# Nom du workflow, visible dans l'interface GitHub Actions
 name: CI for Moseiik
 
-on:
-  push:
-    branches:
-      - main
+# Authors: RITTEMARD.S FRADET.L
 
+# Déclencheurs du workflow
+on:
+  push: # Le workflow est exécuté lorsqu'il y a un push
+    branches:
+      - main # uniquement sur la branche principale
+
+# Définition des jobs du workflow
 jobs:
   test:
+    # Nom du job, affiché dynamiquement en fonction de la plateforme
     name: Test on ${{ matrix.platform }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Machine hôte pour exécuter le workflow
 
+    # Stratégie pour exécuter les tests sur plusieurs architectures
     strategy:
       matrix:
-        platform: [linux/amd64, linux/arm64]
+        platform: [linux/amd64, linux/arm64] # Plateformes ciblées
 
     steps:
-      # Étape 1 : Mise en place de QEMU si nécessaire (pour ARM)
+      # Étape 1 : Configuration de QEMU pour le support multi-architecture (nécessaire pour ARM)
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v2 # Action officielle pour configurer QEMU
         with:
-          platforms: all
+          platforms: all # Configure QEMU pour toutes les plateformes
 
-      # Étape 2 : Mise en place de Docker Buildx pour la construction multi-architecture
-      #- name: Set up Docker Buildx
-      #  uses: docker/setup-buildx-action@v2
-
-      # Étape 3 : Vérifier le code source
+      # Étape 2 : Récupération du code source
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3 # Action officielle pour cloner le dépôt
 
-      # Étape 4 : Construire l'image Docker pour l'architecture spécifiée dans la matrice
+      # Étape 3 : Construction de l'image Docker pour l'architecture spécifiée
       - name: Build Docker image
         run: |
           docker build --platform ${{ matrix.platform }} -t moseiik_docker .
 
-      # Étape 5 : Exécuter les tests dans le conteneur pour l'architecture spécifiée
+      # Étape 4 : Exécution des tests dans le conteneur Docker
       - name: Run tests
         run: |
           docker run --platform ${{ matrix.platform }} --rm moseiik_docker
